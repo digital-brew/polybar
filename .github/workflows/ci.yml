@@ -14,7 +14,7 @@ jobs:
     env:
       COLOR: "ON"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.inputs.ref }}
       - name: Install Dependencies
@@ -48,7 +48,7 @@ jobs:
             python3-xcbgen \
             libuv1-dev \
             xcb-proto
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
           ref: ${{ github.event.inputs.ref }}
@@ -115,7 +115,7 @@ jobs:
           if [ "$POLYBAR_BUILD_TYPE" = "tests" ]; then
             sudo apt-get install -y lcov
           fi
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
           ref: ${{ github.event.inputs.ref }}
@@ -144,14 +144,20 @@ jobs:
           lcov --remove cov_total.info "${PWD}/build/*" "${PWD}/tests/*" "${PWD}/lib/*" -o cov.info
       - name: Upload Coverage
         if: ${{ matrix.polybar_build_type == 'tests' }}
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
+          token: ${{ secrets.CODECOV_TOKEN }}
           flags: unittests
+          # We provide our own coverage files
+          disable_search: true
+          # Disable all plugins, we handle all preparations ourselves
+          plugins: noop
           files: ./cov.info
           fail_ci_if_error: true
+          verbose: true
       - name: Upload Logs
         if: failure()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: cmake
           path: |

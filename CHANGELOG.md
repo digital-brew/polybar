@@ -9,9 +9,42 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- An option `unmute-on-scroll` for `internal/pulseaudio` and `internal/alsa` to unmute audio when the user scrolls on the widget.
+- `internal/battery`: Added `ramp-charging` tag.
+([`#3172`](https://github.com/polybar/polybar/pull/3172))
+by [@stringlapse](https://github.com/stringlapse).
+- Added tray-reversed = false option to tray module. Makes tray icons order reversed. ([`#3181`](https://github.com/polybar/polybar/discussions/3181))
+
+### Changed
+- `internal/pulseaudio`: Volume adjustments now preserve balance instead of volume ratios ([`#3123`](https://github.com/polybar/polybar/issues/3123), [`#3169`](https://github.com/polybar/polybar/pull/3169)) by [`@parmort`](https://github.com/parmort)
+- When the `-r` flag is provided, and RandR reports zero connected active screens, polybar will not restart. This fixes polybar dying on some laptops when the lid is closed. ([`#3078`](https://github.com/polybar/polybar/pull/3078))).
+
+## [3.7.2] - 2024-08-17
+### Fixed
+- `custom/script`: When a script with `tail = true` received multiple lines quickly, only the first would get displayed ([`#3117`](https://github.com/polybar/polybar/issues/3117), [`#3119`](https://github.com/polybar/polybar/pull/3119)) by [@Isak05](https://github.com/Isak05)
+-  Token min-length calculations would behave differently when non-ASCII characters appear in the token ([`#3074`](https://github.com/polybar/polybar/issues/3074), [`#3087`](https://github.com/polybar/polybar/pull/3087)) by [@nklloyd](https://github.com/nklloyd)
+-  i3: Fix duplicated rendering for non-full-width bars ([`#3091`](https://github.com/polybar/polybar/pull/3091), [`#3060`](https://github.com/polybar/polybar/issues/3060))
+- `internal/backlight`: Module could display the literal `%percentage%` token if the backlight reports a value of 0 at startup ([`#3081`](https://github.com/polybar/polybar/pull/3081)) by [@unclechu](https://github.com/unclechu)
+- `internal/tray`: Fix crash during restarting, when tray icons were not removed proberly ([`#3111`](https://github.com/polybar/polybar/issues/3111), [`#3112`](https://github.com/polybar/polybar/pull/3112))
+- `custom/ipc`: Module would display the literal `%output%` token before the initial hook finished executing ([`#3131`](https://github.com/polybar/polybar/issues/3131), [`#3140`](https://github.com/polybar/polybar/pull/3140))
+- renderer: Pseudo-transparency rendering artifacts when wallpaper does not fill entire screen ([`#3096`](https://github.com/polybar/polybar/pull/3096), [`#3041`](https://github.com/polybar/polybar/issues/3041))
+
+## [3.7.1] - 2023-11-27
+### Build
+- Fixed missing header when using `libc++` in clang 15 and below
+
+### Changed
+- `internal/tray`: The module must use the `<tray>` tag (this is the default) ([`#3037`](https://github.com/polybar/polybar/pull/3037))
+
+### Fixed
+- Modules did not validate that all tags (e.g. `<label>`) used in a format were valid for that format ([`#3043`](https://github.com/polybar/polybar/issues/3043), [`#3045`](https://github.com/polybar/polybar/pull/3045))
+- `internal/tray`: Fixed `module-margin` and `separator` being applied to completely empty tray module ([`#3036`](https://github.com/polybar/polybar/issues/3036), [`#3037`](https://github.com/polybar/polybar/pull/3037))
+
+## [3.7.0] - 2023-11-05
 ### Breaking
 - `custom/script`:
-  - now doesn't hide failing script if it's output is not changing ([`#2636`](https://github.com/polybar/polybar/issues/2636)). Somewhat similar behaviour can be imitated with `format-fail`, if necessary.
+  - No longer hides the module if the `exec` command failed and did not change the output from the previous run ([`#2636`](https://github.com/polybar/polybar/issues/2636)). Somewhat similar original behaviour can be imitated with `format-fail`, if necessary.
   - If the `exec` command produced no output and exited with a non-zero exit code the module is no longer completely empty, but just has an empty `%output%` token. If you relied on this behavior to hide the module under certain circumstances, make sure the script exits with an exit code of zero. ([`#2857`](https://github.com/polybar/polybar/discussions/2857), [`#2861`](https://github.com/polybar/polybar/pull/2861))
 
 ### Build
@@ -25,12 +58,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `tray-position`, `tray-detached`, `tray-maxsize`, `tray-scale`, `tray-transparent`, `tray-background`, `tray-foreground`, `tray-padding`, `tray-offset-x`, `tray-offset-y`
 
 ### Added
-- A tray module with type `internal/tray` for positioning the tray like a module
-- Added support for TAG_LABEL (`<label>`) in ipc module ([`#2841`](https://github.com/polybar/polybar/pull/2841)) by [@madhavpcm](https://github.com/madhavpcm).
-- Added support for format-i for each hook-i defined in ipc module ([`#2775`](https://github.com/polybar/polybar/issues/2775), [`#2810`](https://github.com/polybar/polybar/pull/2810)) by [@madhavpcm](https://github.com/madhavpcm).
-- `internal/temperature`: `%temperature-k%` token displays the temperature in kelvin ([`#2774`](https://github.com/polybar/polybar/discussions/2774), [`#2784`](https://github.com/polybar/polybar/pull/2784))
+- A tray module with type `internal/tray` for positioning the tray like a module ([`#2689`](https://github.com/polybar/polybar/issues/2689))
+- `internal/temperature`: `%temperature-k%` token displays the temperature in Kelvin ([`#2774`](https://github.com/polybar/polybar/discussions/2774), [`#2784`](https://github.com/polybar/polybar/pull/2784))
 - `internal/pulseaudio`: `reverse-scroll` option ([`#2664`](https://github.com/polybar/polybar/pull/2664))
 - `custom/script`: Repeat interval for script failure (`interval-fail`) and `exec-if` (`interval-if`) ([`#943`](https://github.com/polybar/polybar/issues/943), [`#2606`](https://github.com/polybar/polybar/issues/2606), [`#2630`](https://github.com/polybar/polybar/pull/2630))
+- `custom/ipc`:
+  - Added support for `<label>` in `format` ([`#2841`](https://github.com/polybar/polybar/pull/2841)) by [@madhavpcm](https://github.com/madhavpcm).
+  - Added support for `format-i` for each defined `hook-i` ([`#2775`](https://github.com/polybar/polybar/issues/2775), [`#2810`](https://github.com/polybar/polybar/pull/2810)) by [@madhavpcm](https://github.com/madhavpcm).
 - `custom/text`: Loads the `format` setting, which supports the `<label>` tag, if the deprecated `content` is not defined ([`#1331`](https://github.com/polybar/polybar/issues/1331), [`#2673`](https://github.com/polybar/polybar/pull/2673), [`#2676`](https://github.com/polybar/polybar/pull/2676))
 - `internal/backlight`:
   - `scroll-interval` option ([`#2696`](https://github.com/polybar/polybar/issues/2696), [`#2700`](https://github.com/polybar/polybar/pull/2700))
@@ -244,7 +278,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Empty color values are no longer treated as invalid and no longer produce an error.
 
-[Unreleased]: https://github.com/polybar/polybar/compare/3.6.3...HEAD
+[Unreleased]: https://github.com/polybar/polybar/compare/3.7.2...HEAD
+[3.7.2]: https://github.com/polybar/polybar/releases/tag/3.7.2
+[3.7.1]: https://github.com/polybar/polybar/releases/tag/3.7.1
+[3.7.0]: https://github.com/polybar/polybar/releases/tag/3.7.0
 [3.6.3]: https://github.com/polybar/polybar/releases/tag/3.6.3
 [3.6.2]: https://github.com/polybar/polybar/releases/tag/3.6.2
 [3.6.1]: https://github.com/polybar/polybar/releases/tag/3.6.1
